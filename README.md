@@ -99,4 +99,4 @@ Built by **Tyler Eastman** (You.com).
 
 MIT—see [LICENSE](LICENSE).
 
-Built with [You.com](https://you.com) and [TypeSafe Jev](https://typesafe.ai). Not affiliated with or endorsed by TypeSafe or the news sources mentioned.
+Built with [You.com](https://you.com) and [TypeSafe Jev](https://typesafe.ai).
