@@ -103,4 +103,4 @@ Built by **Tyler Eastman** (You.com).
 
 MIT—see [LICENSE](LICENSE).
 
-Built with [You.com](https://you.com) and [TypeSafe Jev](https://typesafe.ai).
+Built with [n8n](https://n8n.io), [You.com](https://you.com), and [TypeSafe Jev](https://typesafe.ai).
