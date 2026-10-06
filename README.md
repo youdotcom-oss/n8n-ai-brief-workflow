@@ -44,7 +44,11 @@ Articles that pass are grouped by topic, so five outlets covering one launch bec
 
 ## How It Was Tuned
 
-The thresholds came from an evaluation on 674 articles across 8 weeks, with 160 labeled by hand without seeing Jev's scores.
+Tuning took two passes.
+
+**1. Finding the right questions.** The first version asked Jev only whether an article was on topic and how much it mattered. On its first batch of real results, all 4 articles it flagged were wrong: an encyclopedia page, two funding-database pages, and an explainer. They describe real events, but they aren't news. Adding one narrow question—does this page report a single new development—with examples of what doesn't count fixed it. The questions follow the structured style from [TypeSafe's guide](https://docs.typesafe.ai/concepts/how-to-build-with-system-one), and were checked on companies they weren't written for before going further.
+
+**2. Setting the thresholds.** An evaluation on 674 articles across 8 weeks, with 160 labeled by hand without seeing Jev's scores. Thresholds were picked on the first four weeks and checked on the last four.
 
 | | Wrong posts in the labeled sample | Share of posts that were real news (held-out weeks) | Stories caught |
 |---|---|---|---|

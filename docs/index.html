@@ -84,7 +84,7 @@
   <figcaption>A real morning brief. One post per topic, every claim linked to its source.</figcaption>
 </figure>
 
-<p>AI news moves faster than anyone can read. On a normal weekday, a search for "AI model releases news" returns forty results, and most of them aren't news. They're roundups of last week, release trackers, explainers, listicles, and topic pages that list everything at once.</p>
+<p>AI news moves faster than anyone can read. Search "AI model releases news" for the past day and most of what comes back isn't news. It's roundups of last week, release trackers, explainers, listicles, and topic pages that list everything at once.</p>
 <p>A morning brief that forwards all of that gets muted by Wednesday. So the job was never "summarize more." It's "read all of it, every day, and only speak up when something actually happened."</p>
 <p>This post covers what the workflow does, why it's built the way it is, and what we learned tuning it on eight weeks of real articles.</p>
 
@@ -121,12 +121,31 @@
 <p>A brief about yesterday needs yesterday's sources. A language model's knowledge stops at its training date, so the workflow starts with You.com Search, which returns live results with publication dates. The same API writes the brief at the end, citing the articles it read.</p>
 
 <h3>Judgment has to be cheap enough to run on everything</h3>
-<p>The filter is only useful if it reads every article, not a sample. Jev scores one for about $0.00004, so reading forty results per topic costs a fraction of a cent. Sending every one of them to a research call instead would cost about two hundred times more.</p>
+<p>The filter is only useful if it reads every article, not a sample. Jev scores one for about $0.00004, so reading every result for three topics costs a fraction of a cent. Sending each one to a research call instead would cost more than two hundred times as much.</p>
 
 <h3>Decisions should come with a confidence</h3>
 <p>Jev doesn't return prose to parse. It returns a probability for each yes-or-no question and a score for materiality, each with a confidence. That makes the policy explicit: a threshold in the workflow, not a sentence in a prompt.</p>
 
-<h2><span class="num">03 · How</span>Tuning it on eight weeks of real news.</h2>
+<h2><span class="num">03 · How</span>Designing the questions, then tuning the thresholds.</h2>
+<p>Getting the filter right took two passes. First, finding the right questions to ask Jev, which happened in small, quick experiments. Second, setting the thresholds, which took a proper evaluation.</p>
+
+<h3>Start from what fails</h3>
+<p>The first version asked Jev two things about each article: is it about the company or topic, and how much does it matter? On a first batch of 26 real search results, it flagged 4 articles as important news. All 4 were wrong: an encyclopedia page, two funding-database pages, and an explainer.</p>
+<p>Jev wasn't making a mistake. Those pages really do describe important events, like funding rounds and acquisitions, and they'd been updated recently, so they passed the date filter. The questions just never asked whether the page itself was news.</p>
+
+<h3>Add one narrow question, with examples of what doesn't count</h3>
+<p>So we added a third question: does this page report one specific development that happened around its publish date? Its instructions list what doesn't count—profiles, wikis, funding databases, explainers, and reviews—as concrete examples.</p>
+<p>On the same 26 articles, the four bad pages dropped to scores between 0.04 and 0.23, and the two real stories still passed. When we moved from tracking companies to tracking topics like model releases, a new kind of noise appeared—release trackers and "AI updates today" roundups—so those went into the examples too.</p>
+
+<h3>Use structure, the way Jev's guide recommends</h3>
+<p>TypeSafe's <a href="https://docs.typesafe.ai/concepts/how-to-build-with-system-one">guide to building with Jev</a> recommends structured inputs: put the data in the state as fields, reference them by name in each question, and give each answer option a description and examples. In an earlier experiment routing questions to the right research depth, that structure raised Jev's average confidence from 0.70 to 0.89 on the same 12 test questions compared with plain one-line questions. So every question in this template uses it.</p>
+
+<h3>Check it on cases you didn't write it for</h3>
+<p>Questions written while looking at specific articles can quietly overfit to them. Before going further, we ran the filter on three companies it had never seen. It made the right call on 23 of 24 articles. The one miss was an old funding story that an outlet had re-published, so it looked new.</p>
+<p>That run surfaced a bigger problem, too. One company's busy week produced six separate alerts, mostly different outlets covering the same launch and funding round. That's why the workflow groups articles by topic and writes one brief per topic, instead of one post per article.</p>
+
+<h3>Then measure</h3>
+<p>Small experiments found the right questions. They couldn't tell us where to set the thresholds, so the second pass was a proper evaluation.</p>
 <p>A filter like this is easy to demo and hard to trust. To pick the thresholds, we collected 674 articles from eight one-week windows across three topics, using the template's exact search, and scored every one with the template's exact Jev request.</p>
 <p>Then we labeled 160 of them by hand, "belongs in the brief" or not, without looking at Jev's scores. We chose thresholds using the first four weeks and checked them on the last four, which weren't used for tuning.</p>
 
@@ -176,9 +195,9 @@
 
 <h3>Things testing caught that a demo wouldn't</h3>
 <ul>
-  <li><b>Encyclopedia pages looked like news.</b> Wikipedia and funding-database pages were updated recently and described real events, so they passed until the "one new development" question named them as examples of what doesn't count.</li>
-  <li><b>One launch became seven alerts.</b> Big news gets covered by many outlets. Grouping by topic before writing the brief turned seven posts about one court ruling into one bullet.</li>
+  <li><b>One story, seven articles.</b> Big news gets covered by many outlets. In one test, a single appeals-court ruling produced seven separate passing articles. Grouping by topic means the brief writes about them together instead of posting seven times.</li>
   <li><b>A model name drifted.</b> One early brief wrote "Claude 3.5 Sonnet" for an article about Sonnet 5.5. The research prompt now asks to keep product names exactly as the articles give them.</li>
+  <li><b>Test runs hid real runs.</b> n8n remembers which articles it has seen, including during testing, so a test run could make the next real morning come up empty. The template now has a warning on that node explaining how to clear it.</li>
 </ul>
 
 <div class="note">These numbers come from one labeler, 49 real developments, and historical search results that thin out in older weeks. Treat them as a careful sanity check, not a benchmark. The data and scripts are in the repo, so you can check them.</div>
