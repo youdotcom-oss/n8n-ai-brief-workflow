@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Read Everything, Post Almost Nothing—Morning AI Brief</title>
+<meta name="description" content="How a morning AI news brief for n8n reads hundreds of articles and posts only the real developments, with You.com and TypeSafe Jev.">
+<style>
+  :root{
+    --bg:#0d0d0f; --surface:#151519; --border:#2a2a31;
+    --ink:#eeece8; --ink-soft:#c3c1bb; --muted:#8a877f;
+    --amber:#ff7a3d; --amber-soft:#ffb489; --teal:#45d6c0; --teal-soft:#8fe8db;
+    --bad:#ff5c5c; --good:#45d6c0;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{background:var(--bg)}
+  body{margin:0;color:var(--ink);font-family:var(--sans);font-size:18px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  main{max-width:760px;margin:0 auto;padding:72px 24px 120px}
+  a{color:var(--teal-soft)}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+  h1{font-size:52px;line-height:1.05;letter-spacing:-.02em;margin:14px 0 18px}
+  h2{font-size:30px;line-height:1.2;margin:72px 0 14px;letter-spacing:-.01em}
+  h2 .num{font-family:var(--mono);font-size:13px;color:var(--amber);display:block;letter-spacing:.12em;margin-bottom:6px}
+  h3{font-size:20px;margin:36px 0 8px;color:var(--ink)}
+  p{color:var(--ink-soft);margin:0 0 18px}
+  .lede{font-size:21px;color:var(--ink)}
+  .byline{font-family:var(--mono);font-size:13px;color:var(--muted);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 0;margin:28px 0 36px}
+  figure{margin:30px 0}
+  figure img{width:100%;border-radius:12px;border:1px solid var(--border);display:block}
+  figcaption{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:10px;text-align:center}
+  code{font-family:var(--mono);font-size:.88em;background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px}
+
+  /* pipeline */
+  .pipe{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  .step{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center}
+  .step b{display:block;font-size:13px;color:var(--ink)}
+  .step span{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:4px}
+  .step.jev{border-color:var(--amber)} .step.jev b{color:var(--amber-soft)}
+  .step.ydc{border-color:var(--teal)} .step.ydc b{color:var(--teal-soft)}
+
+  /* funnel */
+  .funnel{display:flex;flex-direction:column;gap:8px}
+  .frow{display:flex;align-items:center;gap:14px}
+  .fbar{height:42px;border-radius:8px;display:flex;align-items:center;padding:0 14px;font-family:var(--mono);font-size:13px;color:#0d0d0f;font-weight:600;white-space:nowrap}
+  .fmeta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+  /* bars */
+  .chart{display:grid;grid-template-columns:150px 1fr 54px;gap:10px 14px;align-items:center}
+  .chart .lbl{font-size:14px;color:var(--ink-soft)}
+  .track{background:var(--bg);border:1px solid var(--border);border-radius:6px;height:26px;overflow:hidden}
+  .fill{height:100%;border-radius:5px}
+  .chart .val{font-family:var(--mono);font-size:14px;color:var(--ink);text-align:right}
+
+  /* before/after */
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .ba .card{text-align:center}
+  .big{font-size:44px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .ba .sub{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px}
+  .dots{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:14px}
+  .dot{width:10px;height:10px;border-radius:2px}
+
+  .note{border-left:3px solid var(--amber);padding:4px 0 4px 16px;margin:24px 0;color:var(--ink-soft)}
+  ul{color:var(--ink-soft);padding-left:22px} li{margin-bottom:8px}
+  footer{margin-top:80px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:12px;color:var(--muted)}
+  @media (max-width:640px){
+    h1{font-size:38px} .pipe{grid-template-columns:repeat(2,1fr)} .ba{grid-template-columns:1fr}
+    .chart{grid-template-columns:110px 1fr 46px}
+  }
+</style>
+</head>
+<body>
+<main>
+
+<div class="kicker">You.com · n8n · Engineering</div>
+<h1>Read everything, post almost nothing.</h1>
+<p class="lede">A morning AI news brief for n8n that reads every article it finds and posts only the real developments. You.com finds and writes. TypeSafe's Jev decides what's worth your attention.</p>
+<div class="byline">Tyler Eastman · You.com · <a href="https://github.com/youdotcom-oss/n8n-ai-news-brief">open source</a></div>
+
+<figure>
+  <img src="../images/slack-brief.jpg" alt="A morning AI brief posted in a Slack channel, with cited bullet points">
+  <figcaption>A real morning brief. One post per topic, every claim linked to its source.</figcaption>
+</figure>
+
+<p>AI news moves faster than anyone can read. On a normal weekday, a search for "AI model releases news" returns forty results, and most of them aren't news. They're roundups of last week, release trackers, explainers, listicles, and topic pages that list everything at once.</p>
+<p>A morning brief that forwards all of that gets muted by Wednesday. So the job was never "summarize more." It's "read all of it, every day, and only speak up when something actually happened."</p>
+<p>This post covers what the workflow does, why it's built the way it is, and what we learned tuning it on eight weeks of real articles.</p>
+
+<h2><span class="num">01 · What</span>One workflow, three moves.</h2>
+<p>Every weekday at 8am, for each topic you follow, the workflow finds the latest coverage, decides which articles report something real, and writes one short cited brief for Slack.</p>
+
+<div class="card">
+  <div class="pipe">
+    <div class="step ydc"><b>Search</b><span>You.com, past day</span></div>
+    <div class="step"><b>Skip seen</b><span>n8n dedupe</span></div>
+    <div class="step jev"><b>Judge</b><span>Jev, 3 questions</span></div>
+    <div class="step"><b>Group</b><span>by topic</span></div>
+    <div class="step ydc"><b>Brief</b><span>You.com Research</span></div>
+    <div class="step"><b>Post</b><span>Slack</span></div>
+  </div>
+</div>
+
+<p style="margin-top:22px">The judgment step is three narrow questions, asked about each article in a single call:</p>
+<ul>
+  <li><b>Does it report one specific new development?</b> A yes or no, with a probability.</li>
+  <li><b>Is it about this topic?</b> Another yes or no.</li>
+  <li><b>How much does it matter to your team?</b> A score from noise to material.</li>
+</ul>
+<p>The workflow posts an article only when all three clear their thresholds. Articles that pass are grouped by topic, so five outlets covering one model launch become one bullet, and You.com Research writes the brief with linked citations.</p>
+
+<figure>
+  <img src="../images/workflow.png" alt="The n8n workflow canvas, with sections for finding news, judging it, and briefing the team">
+  <figcaption>The whole workflow: 14 nodes, no code nodes.</figcaption>
+</figure>
+
+<h2><span class="num">02 · Why</span>Two engines that each do half the job.</h2>
+
+<h3>Retrieval has to be fresh</h3>
+<p>A brief about yesterday needs yesterday's sources. A language model's knowledge stops at its training date, so the workflow starts with You.com Search, which returns live results with publication dates. The same API writes the brief at the end, citing the articles it read.</p>
+
+<h3>Judgment has to be cheap enough to run on everything</h3>
+<p>The filter is only useful if it reads every article, not a sample. Jev scores one for about $0.00004, so reading forty results per topic costs a fraction of a cent. Sending every one of them to a research call instead would cost about two hundred times more.</p>
+
+<h3>Decisions should come with a confidence</h3>
+<p>Jev doesn't return prose to parse. It returns a probability for each yes-or-no question and a score for materiality, each with a confidence. That makes the policy explicit: a threshold in the workflow, not a sentence in a prompt.</p>
+
+<h2><span class="num">03 · How</span>Tuning it on eight weeks of real news.</h2>
+<p>A filter like this is easy to demo and hard to trust. To pick the thresholds, we collected 674 articles from eight one-week windows across three topics, using the template's exact search, and scored every one with the template's exact Jev request.</p>
+<p>Then we labeled 160 of them by hand, "belongs in the brief" or not, without looking at Jev's scores. We chose thresholds using the first four weeks and checked them on the last four, which weren't used for tuning.</p>
+
+<h3>Read everything, show almost nothing</h3>
+<div class="card">
+  <div class="funnel">
+    <div class="frow"><div class="fbar" style="width:100%;background:var(--muted)">674 articles</div></div>
+    <div class="frow"><div class="fbar" style="width:34%;background:var(--amber)">47 material</div><div class="fmeta">passed all three questions</div></div>
+    <div class="frow"><div class="fbar" style="width:22%;background:var(--teal)">13 briefs</div><div class="fmeta">topic-weeks with news</div></div>
+  </div>
+  <p style="margin:16px 0 0;font-size:14px;color:var(--muted);font-family:var(--mono)">8 weeks · 3 topics · $0.03 of Jev for all 674</p>
+</div>
+
+<h3>One narrow question does most of the work</h3>
+<p>The first version asked Jev mostly one thing: how much does this matter? That's the question that feels right, and it was the wrong one to lead with. Roundups and trackers mention lots of important news, so they score as important.</p>
+<div class="card">
+  <div class="chart">
+    <div class="lbl">Materiality only</div><div class="track"><div class="fill" style="width:26%;background:var(--bad)"></div></div><div class="val">26%</div>
+    <div class="lbl">+ new development</div><div class="track"><div class="fill" style="width:80%;background:var(--amber)"></div></div><div class="val">80%</div>
+    <div class="lbl">+ on topic</div><div class="track"><div class="fill" style="width:87%;background:var(--teal)"></div></div><div class="val">87%</div>
+  </div>
+  <p style="margin:16px 0 0;font-size:14px;color:var(--muted);font-family:var(--mono)">share of posts that were real news, labeled sample, weighted to all articles</p>
+</div>
+<p style="margin-top:22px">Asked alone, materiality posts about three junk items for every real one. Adding a single narrow question, "does this page report one specific new development?", with examples of what doesn't count, lifts that to 80%. Breaking a fuzzy judgment into atomic questions is the core advice in TypeSafe's own guide, and this is what it looks like in numbers.</p>
+
+<h3>Stricter thresholds, far fewer mistakes</h3>
+<div class="ba">
+  <div class="card">
+    <div class="big" style="color:var(--bad)">22</div>
+    <div class="sub">wrong posts out of 60<br>original thresholds</div>
+    <div class="dots" aria-hidden="true" id="dots-before"></div>
+  </div>
+  <div class="card">
+    <div class="big" style="color:var(--good)">5</div>
+    <div class="sub">wrong posts out of 39<br>shipped thresholds</div>
+    <div class="dots" aria-hidden="true" id="dots-after"></div>
+  </div>
+</div>
+<p style="margin-top:22px">Raising the cutoffs from 0.6 / 0.6 / 1.5 to 0.8 / 0.8 / 1.3 cut wrong posts by more than four times. On the held-out weeks, the share of posts that were real news rose from 74% to 89%. It cost one story: 18 of 23 real stories still made it into a brief, down from 19.</p>
+<p>What it misses is mostly small launches, like a niche agent tool or a research model. Jev rates them as real but not important to a team building AI products, which is a fair call for a morning brief.</p>
+
+<h3>What didn't make the cut</h3>
+<ul>
+  <li><b>A URL filter.</b> Dropping topic and section pages by URL removed 17 of 45 articles before Jev, but every one of them was a page Jev was already rejecting. The briefs came out identical, so it wasn't worth a node.</li>
+  <li><b>Rewording the question.</b> Naming roundups and release notes explicitly helped at the old thresholds, but at the new ones it gained one point of precision and lost a story.</li>
+</ul>
+
+<h3>Things testing caught that a demo wouldn't</h3>
+<ul>
+  <li><b>Encyclopedia pages looked like news.</b> Wikipedia and funding-database pages were updated recently and described real events, so they passed until the "one new development" question named them as examples of what doesn't count.</li>
+  <li><b>One launch became seven alerts.</b> Big news gets covered by many outlets. Grouping by topic before writing the brief turned seven posts about one court ruling into one bullet.</li>
+  <li><b>A model name drifted.</b> One early brief wrote "Claude 3.5 Sonnet" for an article about Sonnet 5.5. The research prompt now asks to keep product names exactly as the articles give them.</li>
+</ul>
+
+<div class="note">These numbers come from one labeler, 49 real developments, and historical search results that thin out in older weeks. Treat them as a careful sanity check, not a benchmark. The data and scripts are in the repo, so you can check them.</div>
+
+<h2><span class="num">04 · Where This Goes</span>Point it at anything you follow.</h2>
+<p>Nothing in the workflow is specific to AI news. The topics, the team description, and what the team cares about all live in one Config node. Change them and the same three questions judge a different stream: regulatory changes in your industry, a technology you're evaluating, or anything with a steady flow of noisy coverage.</p>
+<p>The pattern travels further than n8n, too. Retrieve with a search API, judge with a decision model, and keep the policy in thresholds you can see and change. It's the same shape as You.com's <a href="https://github.com/youdotcom-oss/cve-triage-agent">security-advisory triage agent</a>, applied to a different daily flood.</p>
+<p>The workflow, the evaluation data, and the scripts are on <a href="https://github.com/youdotcom-oss/n8n-ai-news-brief">GitHub</a>.</p>
+
+<footer>
+  Built with You.com and TypeSafe Jev. Not affiliated with or endorsed by TypeSafe or the news sources mentioned. MIT licensed.
+</footer>
+
+</main>
+<script>
+  // Before/after squares: red for wrong posts, teal for right ones.
+  function dots(id, right, wrong) {
+    var el = document.getElementById(id);
+    for (var i = 0; i < right + wrong; i++) {
+      var d = document.createElement('span');
+      d.className = 'dot';
+      d.style.background = i < wrong ? 'var(--bad)' : 'var(--good)';
+      el.appendChild(d);
+    }
+  }
+  dots('dots-before', 38, 22);
+  dots('dots-after', 34, 5);
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Rebuilt locally by eval/collect.py and eval/score.py
+eval/corpus.json
+eval/scores.local.json
+
+.env
+.DS_Store
+__pycache__/
