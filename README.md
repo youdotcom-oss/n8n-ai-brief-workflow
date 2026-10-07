@@ -4,6 +4,8 @@ Every weekday at 8am, get the real AI developments since yesterday in Slack—on
 
 ![A morning brief posted in Slack](images/slack-brief.jpg)
 
+**[Get the template on n8n.io](https://n8n.io/workflows/20558-send-weekday-ai-news-briefs-to-slack-with-youcom-and-typesafe-jev/)** to import it in one click.
+
 This is an n8n workflow that pairs two engines that each do half the job:
 
 - **[You.com](https://you.com/platform)** finds the latest coverage on the live web and writes cited briefs with its Research API.
@@ -64,7 +66,7 @@ Full results, data, and scripts are in [`eval/`](eval/). Every number reproduces
 You need n8n (Cloud or self-hosted), a [You.com API key](https://you.com/platform), a [TypeSafe API key](https://console.typesafe.ai), and a Slack app that can post to a channel.
 
 1. **Install the You.com node.** It's a verified node, available on n8n Cloud and self-hosted: `@youdotcom-oss/n8n-nodes-youdotcom`.
-2. **Import the workflow** from [`workflow.json`](workflow.json) (n8n menu → Import from File).
+2. **Import the workflow** from the [n8n template library](https://n8n.io/workflows/20558-send-weekday-ai-news-briefs-to-slack-with-youcom-and-typesafe-jev/), or from [`workflow.json`](workflow.json) in this repo (n8n menu → Import from File).
 3. **Add credentials:**
    - **You.com API** on both You.com nodes.
    - **Header Auth** on the Jev node: name `Authorization`, value `Bearer YOUR_TYPESAFE_KEY`.
@@ -81,7 +83,7 @@ Everything you're likely to change lives in the **Config** node:
 
 ## Good to Know
 
-- **A morning costs about $0.01 to $0.04**—Jev for every article, plus one lite research call per brief.
+- **A morning costs a few cents**—three You.com searches, a Jev check on every article (about a fifth of a cent in total), and one lite research brief ($0.012) per topic with news.
 - **Quiet topics get no post.** Some mornings you'll get one brief, or none.
 - **Test runs mark articles as seen.** Before your first real run, set **Skip articles already seen** to *Clear Deduplication History*, execute it once, then switch it back.
 - **Check the sources.** Briefs are cited, but research summaries can occasionally get a detail wrong. The links are there so you can verify.
