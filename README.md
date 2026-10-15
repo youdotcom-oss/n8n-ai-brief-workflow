@@ -63,13 +63,13 @@ Full results, data, and scripts are in [`eval/`](eval/). Every number reproduces
 
 ## Setup
 
-You need n8n (Cloud or self-hosted), a [You.com API key](https://you.com/platform), a [TypeSafe API key](https://console.typesafe.ai), and a Slack app that can post to a channel.
+You need n8n (Cloud or self-hosted), a [You.com API key](https://you.com/platform), a [TypeSafe API key](https://console.typesafe.ai) (or Gateway credits on n8n Cloud), and a Slack app that can post to a channel.
 
-1. **Install the You.com node.** It's a verified node, available on n8n Cloud and self-hosted: `@youdotcom-oss/n8n-nodes-youdotcom`.
+1. **Install the nodes.** Both are verified, so they're available on n8n Cloud; on self-hosted, install them from Settings → Community Nodes: You.com (`@youdotcom-oss/n8n-nodes-youdotcom`) and TypeSafe AI (`@typesafe-ai/n8n-nodes-typesafe-ai`).
 2. **Import the workflow** from the [n8n template library](https://n8n.io/workflows/20558-send-weekday-ai-news-briefs-to-slack-with-youcom-and-typesafe-jev/), or from [`workflow.json`](workflow.json) in this repo (n8n menu → Import from File).
 3. **Add credentials:**
    - **You.com API** on both You.com nodes.
-   - **Header Auth** on the Jev node: name `Authorization`, value `Bearer YOUR_TYPESAFE_KEY`.
+   - **TypeSafe AI API** on the Jev node, with a key from [console.typesafe.ai](https://console.typesafe.ai). On n8n Cloud you can select Gateway credits instead and skip the TypeSafe account.
    - **Slack** on the Slack node, then pick a channel.
 4. **Activate it.** It runs Monday through Friday at 8am in your instance's timezone.
 
