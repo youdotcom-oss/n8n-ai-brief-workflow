@@ -270,26 +270,25 @@
     },
     {
       "parameters": {
-        "mode": "manual",
         "assignments": {
           "assignments": [
             {
               "id": "af988600-9d0c-45b0-b68d-36b65850958d",
               "name": "topic",
               "type": "string",
-              "value": "={{ $('Prepare article').item.json.topic }}"
+              "value": "={{ $json.topic }}"
             },
             {
               "id": "c39ddd1e-15d6-4e86-991b-b0765a23261d",
               "name": "title",
               "type": "string",
-              "value": "={{ $('Prepare article').item.json.title }}"
+              "value": "={{ $json.title }}"
             },
             {
               "id": "e4091127-ed45-4851-b3c7-eeb326679520",
               "name": "url",
               "type": "string",
-              "value": "={{ $('Prepare article').item.json.url }}"
+              "value": "={{ $json.url }}"
             }
           ]
         },
@@ -395,7 +394,7 @@
     },
     {
       "parameters": {
-        "content": "## Get a morning Slack brief on AI model, tooling, and policy news with You.com and Jev\n\nUses the verified You.com node (`@youdotcom-oss/n8n-nodes-youdotcom`) and TypeSafe's official Jev node (`@typesafe-ai/n8n-nodes-typesafe-ai`), available on n8n Cloud and self-hosted.\n\nEvery weekday at 8am, this workflow finds the real AI developments since yesterday and posts one short cited brief per topic to Slack. It's for teams building AI products who want to follow model releases, agent tooling, and AI regulation without reading every newsletter.\n\n### How it works\n\n1. **You.com** searches each topic's news from the past day. Articles seen in earlier runs are skipped.\n2. **Jev**, a low-cost classification model from TypeSafe, asks three questions about each article in one call: does it report a real development, is it about the topic, and how much it matters to your team. That costs about $0.00004 per article.\n3. Material articles are grouped by topic, so several outlets covering one launch become one bullet.\n4. **You.com Research** writes a short brief per topic with linked citations, posted to Slack.\n\n### Requirements\n\nn8n Cloud or self-hosted with the You.com and TypeSafe AI nodes installed, plus You.com, TypeSafe, and Slack credentials.\n\n### Setup steps\n\n1. Add your **You.com API** credential to both You.com nodes.\n2. Add your **TypeSafe AI API** credential to the Jev node, with a key from console.typesafe.ai.\n3. Connect **Slack** and pick a channel.\n4. Edit **Config**: your topics, your team, and what you care about.\n\n### Good to know\n\nA morning costs about $0.01 to $0.04. Topics with no material news get no post. The schedule uses your instance's timezone.\n\n### Customization\n\nChange the topics, or lower `materialityThreshold` for more items.\n",
+        "content": "## Get a morning Slack brief on AI model, tooling, and policy news with You.com and Jev\n\nUses the verified You.com node (`@youdotcom-oss/n8n-nodes-youdotcom`) and the TypeSafe AI node (`@typesafe-ai/n8n-nodes-typesafe-ai`), available on n8n Cloud and self-hosted.\n\nEvery weekday at 8am, this workflow finds the real AI developments since yesterday and posts one short cited brief per topic to Slack. It's for teams building AI products who want to follow model releases, agent tooling, and AI regulation without reading every newsletter.\n\n### How it works\n\n1. **You.com** searches each topic's news from the past day. Articles seen in earlier runs are skipped.\n2. **Jev**, a low-cost classification model from TypeSafe, asks three questions about each article in one call: does it report a real development, is it about the topic, and how much it matters to your team. That costs about $0.00004 per article.\n3. Material articles are grouped by topic, so several outlets covering one launch become one bullet.\n4. **You.com Research** writes a short brief per topic with linked citations, posted to Slack.\n\n### Requirements\n\nn8n Cloud or self-hosted with the You.com node installed, plus You.com, TypeSafe, and Slack credentials.\n\n### Setup steps\n\n1. Add your **You.com API** credential to both You.com nodes.\n2. Add your **TypeSafe AI** credential to the Jev node.\n3. Connect **Slack** and pick a channel.\n4. Edit **Config**: your topics, your team, and what you care about.\n\n### Good to know\n\nA morning costs about $0.01 to $0.04. Topics with no material news get no post. The schedule uses your instance's timezone.\n\n### Customization\n\nChange the topics, or lower `materialityThreshold` for more items.\n",
         "height": 1120,
         "width": 540,
         "color": 1
